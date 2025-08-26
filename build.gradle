@@ -1,0 +1,101 @@
+plugins {
+    id 'java'
+    id 'signing'
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id 'jacoco'
+    id 'jacoco-report-aggregation'
+
+    id "tech.medivh.plugin.publisher" version "1.2.3"
+}
+
+group = 'enterprises.iwakura'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    testCompileOnly 'org.projectlombok:lombok:1.18.38'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    testImplementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1'
+    testImplementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        csv.required.set(true)
+    }
+}
+
+// UTF-8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'enterprises.iwakura.ganyu.test.Main',
+        )
+    }
+}
+
+task publishCloseAndRelease() {
+    dependsOn 'cleanBuildMedivhMavenRepo'
+    dependsOn 'uploadToSonatype'
+    dependsOn 'publishDeployment'
+}
+
+shadowJar {
+    archiveBaseName.set('ganyu')
+    archiveVersion.set(version)
+    archiveClassifier.set('all')
+    destinationDirectory = file("$buildDir/libs")
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier.set('javadoc')
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveClassifier.set('sources')
+}
+
+signing {
+    useInMemoryPgpKeys(
+            System.getenv("GPG_KEY_ID"),
+            System.getenv("GPG_PRIVATE_KEY"),
+            System.getenv("GPG_PASSWORD")
+    )
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.release = 8
+}
