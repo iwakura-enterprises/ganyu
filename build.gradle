@@ -31,6 +31,34 @@ dependencies {
     testImplementation 'org.apache.logging.log4j:log4j-core:2.23.1'
 }
 
+medivhPublisher {
+    groupId = project.group.toString()
+    artifactId = project.name
+    version = project.version.toString()
+    pom {
+        name = "Ganyu"
+        description = "Handles your CLI input as commands."
+        url = "https://github.com/iwakura-enterprises/ganyu"
+        licenses {
+            license {
+                name = "The MIT License"
+                url = "https://opensource.org/license/mit"
+            }
+        }
+        developers {
+            developer {
+                id = "mayuna"
+                name = "Marek Lof"
+                email = "uwulilmayu@gmail.com"
+            }
+        }
+        scm {
+            connection = "scm:git:"
+            url = "https://github.com/iwakura-enterprises/ganyu.git"
+        }
+    }
+}
+
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
