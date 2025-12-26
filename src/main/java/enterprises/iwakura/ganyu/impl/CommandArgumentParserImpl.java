@@ -130,7 +130,7 @@ public class CommandArgumentParserImpl implements CommandArgumentParser {
         // Find matching argument definition
         CommandArgumentDefinition argDef = null;
         for (CommandArgumentDefinition def : argumentDefinitions) {
-            if ((isLongFlag && !def.getLongName().isEmpty() && flagName.equals(def.getLongName())) ||
+            if ((isLongFlag && def.getLongName() != null && !def.getLongName().isEmpty() && flagName.equals(def.getLongName())) ||
                     (!isLongFlag && flagName.equals(def.getName()))) {
                 argDef = def;
                 break;
