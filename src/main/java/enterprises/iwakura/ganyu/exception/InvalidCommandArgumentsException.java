@@ -14,8 +14,8 @@ public class InvalidCommandArgumentsException extends CommandParseException {
     protected final int index;
 
     public InvalidCommandArgumentsException(CommandInvocationContext ctx, Class<?> parameterType, int index) {
-        super(String.format("No argument specified for parameter of type %s at index %d in command %s",
-                parameterType.getName(), index, ctx.getRegisteredCommand().getName()));
+        super(String.format("No argument specified for parameter of type %s at index %d in command %s (syntax: %s)",
+                parameterType.getName(), index, ctx.getRegisteredCommand().getName(), ctx.getRegisteredCommand().getSyntax()));
         this.ctx = ctx;
         this.parameterType = parameterType;
         this.index = index;

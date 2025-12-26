@@ -28,7 +28,14 @@ public class HelpCommand implements GanyuCommand {
             RegisteredCommand command = ganyu.getRegisteredCommandLookup().get(commandName);
 
             if (command == null) {
-                return CommandResult.error("Unknown command: " + commandName);
+                command = commands.stream()
+                    .filter(rootCommand -> rootCommand.getName().equals(commandName))
+                    .findFirst()
+                    .orElse(null);
+            }
+
+            if (command == null) {
+                return CommandResult.error(String.format("Unknown command for help: %s", commandName));
             }
 
             showCommandHelp(command, output, "");
@@ -56,7 +63,11 @@ public class HelpCommand implements GanyuCommand {
     }
 
     private void showCommandHelp(RegisteredCommand command, Output output, String outputPrefix) {
-        output.info(outputPrefix + "Command: " + command.getName());
+        if (outputPrefix == null) {
+            output.info("Command: " + command.getName());
+        } else {
+            output.info(outputPrefix + command.getName());
+        }
         if (command.getDescription() != null && !command.getDescription().isEmpty()) {
             output.info(outputPrefix + "  Description: " + command.getDescription());
         }
@@ -93,7 +104,7 @@ public class HelpCommand implements GanyuCommand {
         if (!command.getSubCommands().isEmpty()) {
             output.info(outputPrefix + "  Sub-commands:");
             command.getSubCommands().forEach(subCommand -> {
-                showCommandHelp(subCommand, output, outputPrefix + "\t");
+                showCommandHelp(subCommand, output, outputPrefix + "\t  ");
             });
         }
     }

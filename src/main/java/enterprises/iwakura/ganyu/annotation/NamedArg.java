@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a named parameter in a command method. A command that holds named parameters
- * must be annotated with {@link NamedArgumentHandler}.
+ * should be annotated with {@link NamedArgumentHandler} if intended to be processed as "-arg value" or "--arg value".
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
@@ -23,6 +23,6 @@ public @interface NamedArg {
      * Long form of the named argument, e.g. "--force"
      * @return the long form
      */
-    String longForm();
+    String longForm() default "";
 
 }

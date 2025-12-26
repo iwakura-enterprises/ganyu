@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
+import java.util.stream.Collectors;
 
 /**
  * Main class for the Ganyu CLI command library.
@@ -169,6 +170,14 @@ public class Ganyu {
 
                     if (registeredCommand == null) {
                         output.error("Unknown command: " + inputString, null);
+
+                        String similarCommandNames = registeredCommandLookup.keySet().stream()
+                            .filter(cmdName -> cmdName.startsWith(inputString.split(" ")[0]))
+                            .collect(Collectors.joining(", "));
+
+                        if (!similarCommandNames.isEmpty()) {
+                            output.info("Similar commands: " + similarCommandNames);
+                        }
                         return;
                     }
 

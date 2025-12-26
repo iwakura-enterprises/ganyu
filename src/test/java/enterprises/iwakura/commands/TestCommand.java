@@ -69,9 +69,8 @@ public class TestCommand implements GanyuCommand {
     }
 
     @SubCommand("echo-all")
-    @Syntax("<simpleNumber> <decimalNumber> <longNumber> <bool> <uuid>")
     @Description("Echoes everything.")
-    public CommandResult echoNumber(CommandInvocationContext ctx, int simpleNumber, double decimalNumber, long longNumber, boolean bool, UUID uuid) {
+    public CommandResult echoNumber(CommandInvocationContext ctx, @NamedArg("simple-number") int simpleNumber, double decimalNumber, long longNumber, boolean bool, UUID uuid) {
         updateReference(ctx, lastOutputReference, String.format(Locale.US, "Simple: %d, Decimal: %.2f, Long: %d, Boolean: %b, UUID: %s", simpleNumber, decimalNumber, longNumber, bool, uuid));
         return CommandResult.success();
     }

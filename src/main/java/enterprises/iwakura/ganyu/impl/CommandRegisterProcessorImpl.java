@@ -21,6 +21,8 @@ import java.util.Optional;
  */
 public class CommandRegisterProcessorImpl implements CommandRegisterProcessor {
 
+    protected CommandSyntaxGenerator syntaxGenerator = new CommandSyntaxGenerator();
+
     @Override
     public List<RegisteredCommand> process(Ganyu ganyu, GanyuCommand command) {
         RegisteredCommand mainCommand = new RegisteredCommand(command);
@@ -122,10 +124,7 @@ public class CommandRegisterProcessorImpl implements CommandRegisterProcessor {
 
             final CommandArgumentDefinition argumentDefinition = new CommandArgumentDefinition();
 
-            if (registeredCommand.isNamedArgumentHandler()) {
-                readNamedArg(parameter, argumentDefinition);
-            }
-
+            readNamedArg(parameter, argumentDefinition);
             argumentDefinition.setParameterName(parameter.getName());
             argumentDefinition.setDescription(readValue(parameter, Description.class).orElse(null));
             argumentDefinition.setInjectable(parameter.isAnnotationPresent(InjectableArgument.class) || parameter.getType().isAnnotationPresent(InjectableArgument.class));
@@ -134,6 +133,11 @@ public class CommandRegisterProcessorImpl implements CommandRegisterProcessor {
             argumentDefinition.setIndex(i);
 
             registeredCommand.addArgumentDefinition(argumentDefinition);
+        }
+
+        // Generate syntax based on arguments if no syntax was provided
+        if (registeredCommand.getSyntax() == null) {
+            registeredCommand.setSyntax(syntaxGenerator.generate(registeredCommand));
         }
     }
 
